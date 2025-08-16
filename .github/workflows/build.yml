@@ -1,0 +1,41 @@
+name: ci
+
+on:
+  push:
+    branches: '**'
+    tags: '**'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set docker image name env
+        run: echo "DOCKER_IMAGE_NAME=pipelining/tool" >> $GITHUB_ENV
+      - name: Set docker image tag env
+        run: echo "DOCKER_TAG_VERSION=$(echo $GITHUB_RUN_NUMBER)" >> $GITHUB_ENV
+      - name: Set docker tag from branch
+        run: echo "DOCKER_TAG_BRANCH=$(echo ${GITHUB_REF##*/})" >> $GITHUB_ENV
+      - name: Prepare Docker tags (add :latest only for tag pushes)
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            echo "DOCKER_TAGS=${DOCKER_IMAGE_NAME}:${DOCKER_TAG_VERSION} ${DOCKER_IMAGE_NAME}:latest" >> $GITHUB_ENV
+          else
+            echo "DOCKER_TAGS=${DOCKER_IMAGE_NAME}:${DOCKER_TAG_BRANCH}" >> $GITHUB_ENV
+          fi
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: pipelining
+          password: ${{ secrets.DOCKERHUB_API_KEY }}
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ env.DOCKER_TAGS }}
