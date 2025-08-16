@@ -11,7 +11,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Set docker image name env
-        run: echo "DOCKER_IMAGE_NAME=pipelining/tool" >> $GITHUB_ENV
+        run: echo "DOCKER_IMAGE_NAME=pipelining/ui-vaadin" >> $GITHUB_ENV
       - name: Set docker image tag env
         run: echo "DOCKER_TAG_VERSION=$(echo $GITHUB_RUN_NUMBER)" >> $GITHUB_ENV
       - name: Set docker tag from branch
