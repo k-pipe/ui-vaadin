@@ -1,0 +1,5 @@
+/venv/bin/python3 -u /app/main.py --config=/workdir/input/config.json --input=/workdir/input/compute/data
+Loading input data frame from file /workdir/input/compute/data
+Read 10 rows with 4 columns
+Opening workbook https://docs.google.com/spreadsheets/d/1tzArBnVJaeYMTbhnO7juCcRp6KE1Vh0r2kMc-1ogw38
+Exiting with error code 2

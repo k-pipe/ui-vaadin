@@ -119,24 +119,35 @@ public class LogScanner {
 
     private void processFile(Path path) {
         Path relPath = dir.relativize(path);
-        if (relPath.getNameCount() != 3) {
-            System.err.println("Name count unexpected: "+relPath);
-        }
-        String command = relPath.getName(0).toString();
-        String step = relPath.getName(1).toString();
-        String filename = relPath.getName(2).toString();
-        try {
-            List<String> lines = Files.readAllLines(path);
+        if (relPath.getNameCount() == 1) {
+            String filename = relPath.getName(0).toString();
             switch (filename) {
-                case "command" -> setCommand(command, step, lines);
-                case "result" -> setResult(command, step, lines);
-                case "output" -> setOutput(command, step, lines);
-                case "error" -> setError(command, step, lines);
+                case Constants.PIPELINE_IMAGE -> setImage(path);
                 default -> System.out.println("unknown file: "+path);
             }
-        } catch (IOException e) {
-            throw new RuntimeException("Could not read file "+path, e);
+        } else if (relPath.getNameCount() == 3) {
+            String command = relPath.getName(0).toString();
+            String step = relPath.getName(1).toString();
+            String filename = relPath.getName(2).toString();
+            try {
+                List<String> lines = Files.readAllLines(path);
+                switch (filename) {
+                    case "command" -> setCommand(command, step, lines);
+                    case "result" -> setResult(command, step, lines);
+                    case "output" -> setOutput(command, step, lines);
+                    case "error" -> setError(command, step, lines);
+                    default -> System.out.println("unknown file: "+path);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("Could not read file "+path, e);
+            }
+        } else {
+            System.err.println("Name count unexpected: "+relPath);
         }
+    }
+
+    private void setImage(Path path) {
+        controller.setImage(path.toFile());
     }
 
     private void setCommand(String command, String step, List<String> lines) {

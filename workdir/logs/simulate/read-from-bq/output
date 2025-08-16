@@ -1,0 +1,7 @@
+/venv/bin/python3 -u /app/main.py --config=/workdir/input/config.json --output=/workdir/output/data
+Setting up bigquery client for project breuni-team-ml-ace-dev
+Reading data from breuni-team-ml-ace-dev.etl_demo.triangles
+Read 3 columns and 10 rows in 4.3 seconds.
+Writing data to file /workdir/output/data
+Done
+Terminating main thread normally

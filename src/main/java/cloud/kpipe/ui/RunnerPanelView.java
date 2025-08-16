@@ -1,5 +1,6 @@
 package cloud.kpipe.ui;
 
+import cloud.kpipe.logscanner.Constants;
 import cloud.kpipe.logscanner.LogScanner;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Unit;
@@ -28,7 +29,7 @@ import java.util.List;
 @Route("")
 public class RunnerPanelView extends VerticalLayout {
 
-    private static final Path WATCHDIR = Path.of("/Users/ebadmin/git/gitlab/gcp/pipelines/ace/etl-demo/logs");
+    private static final Path WATCHDIR = Path.of(Constants.LOGDIR);
     private final int TOP_HEIGHT = 60;
     private final int BOTTOM_HEIGHT = 40;
     private final HorizontalLayout top;
@@ -169,7 +170,7 @@ public class RunnerPanelView extends VerticalLayout {
         // Image
         StreamResource resource = new StreamResource("example.png", () -> {
             try {
-                return new FileInputStream("/Users/ebadmin/Documents/example.png");
+                return new FileInputStream(WATCHDIR.resolve(Constants.PIPELINE_IMAGE).toFile());
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 return null;

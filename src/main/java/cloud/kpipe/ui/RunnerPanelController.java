@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -56,5 +57,8 @@ public class RunnerPanelController {
     }
 
     public void setCommandLine(String command, String step, String commandline) {
+    }
+
+    public void setImage(File imageFile) {
     }
 }
