@@ -3,17 +3,20 @@ FROM gradle:8.10-jdk17 AS build
 
 WORKDIR /app
 
-# Copy build files first (better caching)
-COPY build.gradle settings.gradle gradle.properties ./
+# Copy Gradle wrapper
+COPY gradlew .
 COPY gradle ./gradle
 
-# Download dependencies
-RUN gradle build -x test --no-daemon || return 0
+# Copy build files
+COPY build.gradle settings.gradle gradle.properties ./
 
-# Copy the source
+# Copy sources
 COPY src ./src
 
-# Build for production (Vaadin + Quarkus)
+# Make gradlew executable
+RUN chmod +x ./gradlew
+
+# Build for production
 RUN ./gradlew -Pvaadin.productionMode build -x test --no-daemon
 
 # ---- Runtime Stage ----
