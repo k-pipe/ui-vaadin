@@ -1,0 +1,6 @@
+{
+  "productionMode": true,
+  "eagerServerLoad": false,
+  "react.enable": true,
+  "applicationIdentifier": "app-844c3a527c07894e6b72e751daee150152614eedefff35aa743ec9dae8eceb2c"
+}

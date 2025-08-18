@@ -1,1 +1,0 @@
-docker run -v /Users/ebadmin/.config/gcloud:/root/.config/gcloud -v /Users/ebadmin/git/gitlab/gcp/pipelines/ace/etl-demo/simulation/3-write-to-sheet:/workdir europe-west3-docker.pkg.dev/breuni-team-admin-ace/docker-public/ace/pocs/pipeline-ecosystem/central-components/sheet-load:1.0.1 --config=/workdir/input/config.json --input=/workdir/input/compute/data

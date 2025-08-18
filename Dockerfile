@@ -1,31 +1,29 @@
-# ============================
-# 1. Build-Stage
-# ============================
-FROM maven:3.9.8-eclipse-temurin-21 AS build
+# ---- Build Stage ----
+FROM gradle:8.10-jdk17 AS build
 
-# Arbeitsverzeichnis setzen
-WORKDIR /build
-
-# Projektdateien kopieren
-COPY pom.xml .
-COPY src ./src
-
-# Quarkus App bauen (Uber-Jar oder Fast-Jar)
-RUN mvn -B clean install -Pproduction -DskipTests
-
-# ============================
-# 2. Run-Stage (nur das fertige JAR)
-# ============================
-FROM eclipse-temurin:21-jre-jammy
-
-# Quarkus benötigt ein Arbeitsverzeichnis
 WORKDIR /app
 
-# aus Build-Stage kopieren (Fast-Jar Struktur von Quarkus)
-COPY --from=build /build/target/quarkus-app /app/
+# Copy build files first (better caching)
+COPY build.gradle settings.gradle gradle.properties ./
+COPY gradle ./gradle
 
-# Exponiere Standardport
+# Download dependencies
+RUN gradle build -x test --no-daemon || return 0
+
+# Copy the source
+COPY src ./src
+
+# Build for production (Vaadin + Quarkus)
+RUN ./gradlew -Pvaadin.productionMode build -x test --no-daemon
+
+# ---- Runtime Stage ----
+FROM eclipse-temurin:17-jre AS runtime
+
+WORKDIR /app
+
+# Copy built Quarkus app
+COPY --from=build /app/build/quarkus-app /app
+
 EXPOSE 8080
 
-# Startkommando
-ENTRYPOINT ["java", "-jar", "/app/quarkus-run.jar"]
+CMD ["java", "-jar", "quarkus-run.jar"]

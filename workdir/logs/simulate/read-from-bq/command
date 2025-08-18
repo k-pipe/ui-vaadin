@@ -1,1 +1,0 @@
-docker run -v /Users/ebadmin/.config/gcloud:/root/.config/gcloud -v /Users/ebadmin/git/gitlab/gcp/pipelines/ace/etl-demo/simulation/1-read-from-bq:/workdir europe-west3-docker.pkg.dev/breuni-team-admin-ace/docker-public/ace/pocs/pipeline-ecosystem/central-components/bq-extract-simple:0.1.0 --config=/workdir/input/config.json --output=/workdir/output/data

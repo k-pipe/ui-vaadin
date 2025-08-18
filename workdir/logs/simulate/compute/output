@@ -1,5 +1,0 @@
-/venv/bin/python3 -u /app/main.py --config=/workdir/input/config.json --input=/workdir/input/read-from-bq/data --output=/workdir/output/data
-Loading input data frame from file /workdir/input/read-from-bq/data
-Writing data to file /workdir/output/data
-Done
-Terminating main thread normally

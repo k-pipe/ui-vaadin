@@ -1,0 +1,18 @@
+{
+  "productionMode": false,
+  "eagerServerLoad": false,
+  "npmFolder": "/Users/ebadmin/git/github/k-pipe/ui-vaadin",
+  "node.version": "v22.13.1",
+  "node.download.root": "https://nodejs.org/dist/",
+  "frontendFolder": "/Users/ebadmin/git/github/k-pipe/ui-vaadin/./src/main/frontend",
+  "connect.javaSourceFolder": "/Users/ebadmin/git/github/k-pipe/ui-vaadin/src/main/java",
+  "javaResourceFolder": "/Users/ebadmin/git/github/k-pipe/ui-vaadin/src/main/resources",
+  "connect.applicationProperties": "/Users/ebadmin/git/github/k-pipe/ui-vaadin/src/main/resources/application.properties",
+  "connect.openApiFile": "/Users/ebadmin/git/github/k-pipe/ui-vaadin/build/generated-resources/openapi.json",
+  "project.frontend.generated": "/Users/ebadmin/git/github/k-pipe/ui-vaadin/./src/main/frontend/generated",
+  "pnpm.enable": true,
+  "bun.enable": false,
+  "require.home.node": false,
+  "build.folder": "build",
+  "react.enable": true
+}

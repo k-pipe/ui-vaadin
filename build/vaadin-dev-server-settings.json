@@ -1,0 +1,17 @@
+{
+  "frontendFolder": "/Users/ebadmin/git/github/k-pipe/ui-vaadin/./src/main/frontend",
+  "themeFolder": "themes",
+  "themeResourceFolder": "/Users/ebadmin/git/github/k-pipe/ui-vaadin/./src/main/frontend/generated/jar-resources",
+  "staticOutput": "/Users/ebadmin/git/github/k-pipe/ui-vaadin/build/resources/main/META-INF/VAADIN/webapp/VAADIN/static",
+  "generatedFolder": "generated",
+  "statsOutput": "/Users/ebadmin/git/github/k-pipe/ui-vaadin/build/resources/main/META-INF/VAADIN/config",
+  "frontendBundleOutput": "/Users/ebadmin/git/github/k-pipe/ui-vaadin/build/resources/main/META-INF/VAADIN/webapp",
+  "devBundleOutput": "/Users/ebadmin/git/github/k-pipe/ui-vaadin/build/dev-bundle/webapp",
+  "devBundleStatsOutput": "/Users/ebadmin/git/github/k-pipe/ui-vaadin/build/dev-bundle/config",
+  "jarResourcesFolder": "/Users/ebadmin/git/github/k-pipe/ui-vaadin/./src/main/frontend/generated/jar-resources",
+  "themeName": "starter-theme",
+  "clientServiceWorkerSource": "/Users/ebadmin/git/github/k-pipe/ui-vaadin/build/sw.ts",
+  "pwaEnabled": false,
+  "offlineEnabled": false,
+  "offlinePath": "'offline.html'"
+}
