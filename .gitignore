@@ -4,3 +4,4 @@ src/main/frontend/generated
 build
 node_modules
 .npmrc
+vite.generated.ts
