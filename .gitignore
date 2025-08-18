@@ -1,0 +1,4 @@
+.idea
+.gradle
+src/main/frontend/generated
+build
