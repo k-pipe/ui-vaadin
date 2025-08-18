@@ -2,3 +2,5 @@
 .gradle
 src/main/frontend/generated
 build
+node_modules
+.npmrc
