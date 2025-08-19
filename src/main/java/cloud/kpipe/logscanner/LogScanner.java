@@ -97,6 +97,9 @@ public class LogScanner {
     }
 
     private void processEvent(WatchEvent.Kind<?> kind, Path file) {
+        if (kind.equals(StandardWatchEventKinds.ENTRY_CREATE) || kind.equals(StandardWatchEventKinds.ENTRY_MODIFY)) {
+            processFile(file);
+        }
     }
 
     public void fullScan() {
@@ -122,7 +125,7 @@ public class LogScanner {
         if (relPath.getNameCount() == 1) {
             String filename = relPath.getName(0).toString();
             switch (filename) {
-                case Constants.PIPELINE_IMAGE -> setImage(path);
+                case "pipeline.png" -> setImage(path);
                 default -> System.out.println("unknown file: "+path);
             }
         } else if (relPath.getNameCount() == 3) {
