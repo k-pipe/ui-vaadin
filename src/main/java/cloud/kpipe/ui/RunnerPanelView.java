@@ -3,6 +3,7 @@ package cloud.kpipe.ui;
 import cloud.kpipe.logscanner.Constants;
 import cloud.kpipe.logscanner.LogScanner;
 import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -10,6 +11,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
@@ -22,6 +24,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * The main view contains a button and a click listener.
@@ -53,12 +59,14 @@ public class RunnerPanelView extends VerticalLayout {
     ActionHandler actionHandler;
 
     @Inject
-    RunnerPanelController controller;
-
-    @Inject
     LogScanner logscanner;
 
+    ExecutorService executor = Executors.newSingleThreadExecutor();
+
+    UI ui;
+
     public RunnerPanelView() {
+        ui = UI.getCurrent();
         setSpacing(false);
         setPadding(false);
 
@@ -114,8 +122,8 @@ public class RunnerPanelView extends VerticalLayout {
         /*Div r = new Div();
         r.setText("Right side");
         r.getStyle().set("background-color", "lightgray");*/
-        Image i = getImage();
-        right.add(i);
+        //Image i = getImage();
+        //right.add(i);
         //r.setSizeFull();
         //r.add(i);
         //i.setSizeFull();
@@ -154,7 +162,7 @@ public class RunnerPanelView extends VerticalLayout {
 
     @PostConstruct
     private void init() {
-        controller.setUpdateRunnable(this::update);
+        logscanner.setUpdateRunnable(this::update);
         System.out.println("Reading logs");
         logscanner.startWatching(WATCHDIR);
         logscanner.fullScan();
@@ -166,11 +174,12 @@ public class RunnerPanelView extends VerticalLayout {
         logscanner.stopWatching();
     }
 
-    public Image getImage() {
+    public Image getImage(String imageFile) {
+        System.out.println("Getting image: "+imageFile);
         // Image
-        StreamResource resource = new StreamResource("example.png", () -> {
+        StreamResource resource = new StreamResource(imageFile, () -> {
             try {
-                return new FileInputStream(WATCHDIR.resolve(Constants.PIPELINE_IMAGE).toFile());
+                return new FileInputStream(WATCHDIR.resolve(imageFile).toFile());
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 return null;
@@ -186,10 +195,43 @@ public class RunnerPanelView extends VerticalLayout {
     }
 
     public void update() {
+        if (ui.isAttached()) {
+            System.out.println("Triggering update");
+            executor.submit(() -> {
+                System.out.println("Requesting UI access");
+                // background work
+                Future<Void> res = ui.access(() -> {
+                    System.out.println("Got UI access");
+                    // safe UI update inside session lock
+                    doUpdate();
+                });
+                System.out.println("Requested UI access");
+                try {
+                    Void unused = res.get();
+                    System.out.println("Future was obtained");
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                } catch (ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } else {
+            System.out.println("UI is not attached any longer");
+        }
+    }
+
+    private void doUpdate() {
+        System.out.println("Running view update");
         statusLine.setText(model.statusLine);
         tabs1.removeAll();
         model.commandLogs.keySet().forEach(this::updateTabTitle1);
         updateTab1Content();
+        if (model.wasImageUpdated()) {
+            System.out.println("Updating image in right panel");
+            Image i = getImage(model.getImageFile());
+            right.removeAll();
+            right.add(i);
+        }
     }
 
     private void updateTabTitle1(String command) {

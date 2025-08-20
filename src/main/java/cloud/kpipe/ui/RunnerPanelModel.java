@@ -2,6 +2,7 @@ package cloud.kpipe.ui;
 
 import jakarta.inject.Singleton;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -13,6 +14,9 @@ public class RunnerPanelModel {
 
     public String pipelineTitel;
     public String statusLine;
+
+    public boolean imageWasUpdated;
+    public String imageFile;
 
     public boolean requiresUpdateSelectedCommand(String command) {
         return (((command == null) && (selectedCommand != null))
@@ -29,6 +33,15 @@ public class RunnerPanelModel {
         }
         return (((step == null) && (ls.selectedStep != null))
                 || (step != null) && !step.equals(ls.selectedStep));
+    }
+
+    public boolean wasImageUpdated() {
+        return imageWasUpdated;
+    }
+
+    public String getImageFile() {
+        this.imageWasUpdated = false;
+        return imageFile;
     }
 
 

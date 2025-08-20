@@ -14,19 +14,12 @@ public class RunnerPanelController {
     @Inject
     RunnerPanelModel model;
 
-    Runnable updateRunnable;
-
-    public void setUpdateRunnable(Runnable updateRunnable) {
-        this.updateRunnable = updateRunnable;
-    }
-
     public void addLog(String command, String step, String logLine) {
         model.commandLogs.putIfAbsent(command, new LogSet());
         LogSet commandLog = model.commandLogs.get(command);
         commandLog.stepLogs.putIfAbsent(step, new StepLog());
         commandLog.stepLogs.get(step).logLines.add(logLine);
         commandLog.selectedStep = step;
-        updateRunnable.run();
     }
 
     public void setSelectedCommand(String command) {
@@ -43,7 +36,6 @@ public class RunnerPanelController {
 
     public void setStatus(String text) {
       model.statusLine = text;
-      updateRunnable.run();
     }
 
     public void setOutput(String command, String step, List<String> lines) {
@@ -53,12 +45,14 @@ public class RunnerPanelController {
         sl.logLines = lines;
         commandLog.stepLogs.put(step, sl);
         commandLog.selectedStep = step;
-        updateRunnable.run();
     }
 
     public void setCommandLine(String command, String step, String commandline) {
     }
 
-    public void setImage(File imageFile) {
+    public void setImage(String imageFile) {
+        System.out.println("Updated image file: "+imageFile);
+        model.imageFile = imageFile;
+        model.imageWasUpdated = true;
     }
 }

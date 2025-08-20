@@ -12,6 +12,7 @@ import java.util.List;
 @Singleton
 public class LogScanner {
 
+    public static final String PIPELINE_PNG = "pipeline.png";
     private Path dir;
 
     @Inject
@@ -23,12 +24,18 @@ public class LogScanner {
 
     private boolean running;
 
+    Runnable updateRunnable;
+
     public LogScanner() {
         try {
             this.watchService = FileSystems.getDefault().newWatchService();
         } catch (IOException e) {
             throw new RuntimeException("Could not create watch service", e);
         }
+    }
+
+    public void setUpdateRunnable(Runnable updateRunnable) {
+        this.updateRunnable = updateRunnable;
     }
 
     public void startWatching(Path dir) {
@@ -49,6 +56,7 @@ public class LogScanner {
                     try {
                         WatchKey key = watchService.take(); // Blocks until an event occurs
                         processEvents(key);
+                        updateRunnable.run();
                         key.reset(); // Reset the key to receive further events for this directory
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
@@ -88,12 +96,18 @@ public class LogScanner {
     }
 
     private void processEvents(WatchKey key) {
-        for (WatchEvent<?> event : key.pollEvents()) {
+        int num = 0;
+        System.out.println("Polling events for watch key: "+key);
+        List<WatchEvent<?>> events = key.pollEvents();
+        System.out.println("Received "+events.size()+" events to process");
+        for (WatchEvent<?> event : events) {
             WatchEvent.Kind<?> kind = event.kind();
             Path affectedFile = (Path) event.context();
             System.out.println("File event: " + kind + ". File: " + affectedFile);
             processEvent(kind, affectedFile);
+            num++;
         }
+        System.out.println(num+" file events were processed.");
     }
 
     private void processEvent(WatchEvent.Kind<?> kind, Path file) {
@@ -106,9 +120,9 @@ public class LogScanner {
         try {
             Files.walk(dir).forEach(this::processPath);
         } catch (IOException e) {
-            throw new RuntimeException("Could nat walk file tree", e);
+            throw new RuntimeException("Could not walk file tree", e);
         }
-
+        updateRunnable.run();
     }
 
     private void processPath(Path path) {
@@ -116,41 +130,42 @@ public class LogScanner {
         if (path.toFile().isDirectory()) {
             registerDir(path);
         } else {
-            processFile(path);
+            System.out.println("processing file: "+path);
+            Path relPath = dir.relativize(path);
+            processFile(relPath);
         }
     }
 
-    private void processFile(Path path) {
-        Path relPath = dir.relativize(path);
+    private void processFile(Path relPath) {
         if (relPath.getNameCount() == 1) {
             String filename = relPath.getName(0).toString();
             switch (filename) {
-                case "pipeline.png" -> setImage(path);
-                default -> System.out.println("unknown file: "+path);
+                case PIPELINE_PNG -> setImage(filename);
+                default -> System.out.println("unknown file: "+relPath);
             }
         } else if (relPath.getNameCount() == 3) {
             String command = relPath.getName(0).toString();
             String step = relPath.getName(1).toString();
             String filename = relPath.getName(2).toString();
             try {
-                List<String> lines = Files.readAllLines(path);
+                List<String> lines = Files.readAllLines(dir.resolve(relPath));
                 switch (filename) {
                     case "command" -> setCommand(command, step, lines);
                     case "result" -> setResult(command, step, lines);
                     case "output" -> setOutput(command, step, lines);
                     case "error" -> setError(command, step, lines);
-                    default -> System.out.println("unknown file: "+path);
+                    default -> System.out.println("unknown file: "+relPath);
                 }
             } catch (IOException e) {
-                throw new RuntimeException("Could not read file "+path, e);
+                throw new RuntimeException("Could not read file "+relPath, e);
             }
         } else {
             System.err.println("Name count unexpected: "+relPath);
         }
     }
 
-    private void setImage(Path path) {
-        controller.setImage(path.toFile());
+    private void setImage(String filename) {
+        controller.setImage(filename);
     }
 
     private void setCommand(String command, String step, List<String> lines) {
