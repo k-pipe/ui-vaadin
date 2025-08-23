@@ -1,18 +1,33 @@
 package cloud.kpipe.ui;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.DecimalFormat;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 public class StepLog {
     public List<String> logLines;
+    public List<String> errorLines;
 
-    public String command;
-    public boolean success;
-    public double time;
+    public String commandLine;
+    public Boolean success;
+    public LocalDateTime started;
+    public LocalDateTime terminated;
 
     public String getSummary() {
-        return (success ? "Succeeded in" : "Failed after") + " " + String.format("%f.1",time) +"s";
+        if (started == null) {
+            return "Not started yet";
+        }
+        if (terminated != null) {
+            long milis = Duration.between(started, terminated).toMillis();
+            double seconds = milis/1000.0;
+            double minutes = seconds/60.0;
+            String time = minutes > 1.0 ? String.format(Locale.US,"%.1f", minutes) + " minutes" : String.format(Locale.US,"%.1f", seconds) + " seconds";
+            return (success == null ? "Terminated after " : success ? "Succeeded in " : "Failed after ") + time;
+        }
+        return "Started at " + DateTimeFormatter.ofPattern("HH:mm:ss").format(started);
     }
+
+
 }

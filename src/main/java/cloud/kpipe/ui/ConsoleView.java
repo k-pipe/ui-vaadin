@@ -27,8 +27,8 @@ public class ConsoleView extends VerticalLayout {
         consoleContainer = new Div();
         consoleContainer.addClassName("console-container");
         consoleContainer.setWidthFull();
-        consoleContainer.setWidth("500px"); // tweak as needed
-        consoleContainer.setHeight("360px"); // tweak as needed
+        //consoleContainer.setWidth("500px"); // tweak as needed
+        //consoleContainer.setHeight("360px"); // tweak as needed
         consoleContainer.getStyle().set("overflow-y", "scroll"); // <- always shows vertical scrollbar
         consoleContainer.getStyle().set("overflow-x", "auto");   // <- horizontal scrollbar if needed
         //        consoleContainer.getStyle().set("overflow", "auto"); // enables scrollbar
@@ -43,6 +43,7 @@ public class ConsoleView extends VerticalLayout {
         textAbove = new Div();
         textAbove.getStyle().set("color", "purple");
         textAbove.getStyle().set("font-family", "ui-monospace, SFMono-Regular, Menlo, Monaco, \"Roboto Mono\", \"Courier New\", monospace");
+        textAbove.getStyle().set("font-size", "10px");
 
         textBelow = new Div();
         textBelow.setText("Text Below");

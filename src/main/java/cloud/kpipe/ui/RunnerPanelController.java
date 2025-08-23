@@ -5,6 +5,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,16 +39,26 @@ public class RunnerPanelController {
       model.statusLine = text;
     }
 
-    public void setOutput(String command, String step, List<String> lines) {
+    private LogSet getOrCreateLogSet(String command) {
         model.commandLogs.putIfAbsent(command, new LogSet());
-        LogSet commandLog = model.commandLogs.get(command);
-        StepLog sl = new StepLog();
-        sl.logLines = lines;
-        commandLog.stepLogs.put(step, sl);
-        commandLog.selectedStep = step;
+        return model.commandLogs.get(command);
+    }
+
+    private StepLog getOrCreateStepLog(String command, String step) {
+        LogSet logset = getOrCreateLogSet(command);
+        logset.stepLogs.putIfAbsent(step, new StepLog());
+        return logset.stepLogs.get(step);
+    }
+
+    public void setOutput(String command, String step, List<String> lines) {
+        getOrCreateStepLog(command, step).logLines = lines;
+    }
+    public void setError(String command, String step, List<String> lines) {
+        getOrCreateStepLog(command, step).errorLines = lines;
     }
 
     public void setCommandLine(String command, String step, String commandline) {
+        getOrCreateStepLog(command, step).commandLine = commandline;
     }
 
     public void setImage(String imageFile) {
@@ -55,4 +66,17 @@ public class RunnerPanelController {
         model.imageFile = imageFile;
         model.imageWasUpdated = true;
     }
+
+    public void setStepSuccess(String command, String step, boolean success) {
+        getOrCreateStepLog(command, step).success = success;
+    }
+
+    public void setStarted(String command, String step, LocalDateTime timestamp) {
+        getOrCreateStepLog(command, step).started = timestamp;
+    }
+
+    public void setTerminated(String command, String step, LocalDateTime timestamp) {
+        getOrCreateStepLog(command, step).terminated = timestamp;
+    }
+
 }

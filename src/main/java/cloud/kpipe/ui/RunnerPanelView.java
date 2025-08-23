@@ -240,13 +240,10 @@ public class RunnerPanelView extends VerticalLayout {
     }
 
     private void updateTab1Content() {
-        System.out.println("Log2: "+model.selectedCommand);
         tabs2.removeAll();
         if (model.selectedCommand != null) {
             LogSet logSet = model.commandLogs.get(model.selectedCommand);
-            System.out.println("Log3: "+model.selectedCommand);
             logSet.stepLogs.keySet().forEach(this::updateTabTitle2);
-            System.out.println("Updated stepLogs: "+logSet.stepLogs.keySet());
         }
         updateConsole();
     }
@@ -266,9 +263,9 @@ public class RunnerPanelView extends VerticalLayout {
         }
         console.setEnabled(sl != null);
         console.setContent(sl == null ? null : String.join("\n", sl.logLines));
-        console.setTextAbove(sl == null ? "" : sl.command);
+        console.setTextAbove(sl == null ? "" : sl.commandLine);
         console.setTextBelow(sl == null ? "" : sl.getSummary());
-        console.setTextBelowColor(sl == null || sl.success ? "green" : "red");
+        console.setTextBelowColor(sl == null || sl.success == null ? "gray" : sl.success ? "green" : "red");
     }
 
 
