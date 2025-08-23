@@ -49,8 +49,13 @@ public class ConsoleView extends VerticalLayout {
         textBelow.setText("Text Below");
         textBelow.getStyle().set("color", "green");
 
+        setFlexGrow(0, textBelow);
+        setFlexGrow(1, consoleContainer);
+        setFlexGrow(0, textBelow);
         add(textAbove, consoleContainer, textBelow);
-        consoleContainer.setSizeFull();
+
+        consoleContainer.setHeight("10px"); // set some small height
+        consoleContainer.setWidthFull();
         setSizeFull();
     }
 
